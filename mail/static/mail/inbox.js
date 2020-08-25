@@ -6,6 +6,8 @@ document.addEventListener('DOMContentLoaded', function() {
   document.querySelector('#archived').addEventListener('click', () => load_mailbox('archive'));
   document.querySelector('#compose').addEventListener('click', compose_email);
 
+
+
   // By default, load the inbox
   load_mailbox('inbox');
 });
@@ -52,6 +54,7 @@ function load_mailbox(mailbox) {
   // Show the mailbox name
   document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
 
+
  //get and show emails
  document.querySelector('#emails-view')
  const emails = []
@@ -65,23 +68,28 @@ function load_mailbox(mailbox) {
     let sender = emails.map(a => a.sender);
     let subject = emails.map(a => a.subject);
     let timestamp = emails.map(a => a.timestamp);
+    let read = emails.map(a => a.read);
+
 
     //display emails
     var i;
     for (i = 0; i < emails.length; i++) {
-    var newDiv = document.createElement("div"); 
+    var newDiv = document.createElement("div");
     newDiv.className = "email-class";
     newDiv.style.border = "thin solid";
     newDiv.style.borderColor = "black";
     newDiv.style.padding = "15px";
-    newDiv.style.marginLeft = "210px";
-    newDiv.style.marginRight = "210px";
+    newDiv.style.marginLeft = "25x";
+    newDiv.style.marginRight = "10px";
     let a = sender[i];
     let b = subject[i];
     let c = timestamp[i];
-    newDiv.innerHTML = `${a}  ${b}  ${c}`;
-    document.body.appendChild(newDiv);
+    if (read[i] == true) {
+      newDiv.style.backgroundColor = "#DCDCDC";
+    }   
+    newDiv.innerHTML = `<h5 style="font-weight:bold">${a}</h5> <h6>${b}</h6> <h7 style="color: gray">${c}</h7`;
+    document.getElementById('emails-view').appendChild(newDiv);
     }
-    });
-
-}
+    
+ 
+})}
