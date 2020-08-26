@@ -62,20 +62,21 @@ function load_mailbox(mailbox) {
  .then(response => response.json())
  .then(emails => {
      // Print emails
-     console.log(emails);
+     //console.log(emails);
 
      //array of each field
     let sender = emails.map(a => a.sender);
     let subject = emails.map(a => a.subject);
     let timestamp = emails.map(a => a.timestamp);
     let read = emails.map(a => a.read);
+    let email_id = emails.map(a => a.id);
 
 
     //display emails
     var i;
     for (i = 0; i < emails.length; i++) {
     var newDiv = document.createElement("div");
-    newDiv.className = "email-class";
+    newDiv.id = email_id[i];
     newDiv.style.border = "thin solid";
     newDiv.style.borderColor = "black";
     newDiv.style.padding = "15px";
@@ -87,9 +88,16 @@ function load_mailbox(mailbox) {
     if (read[i] == true) {
       newDiv.style.backgroundColor = "#DCDCDC";
     }   
-    newDiv.innerHTML = `<h5 style="font-weight:bold">${a}</h5> <h6>${b}</h6> <h7 style="color: gray">${c}</h7`;
-    document.getElementById('emails-view').appendChild(newDiv);
+    newDiv.innerHTML = `<h5 style="font-weight:bold">${a}</h5> <h6>${b}</h6> <h7 style="color: gray">${c}</h7>`;
+    document.getElementById('emails-view').append(newDiv);
     }
-    
- 
-})}
+
+document.addEventListener('click', function(e) {
+const clicked = e.target.id
+  fetch(`/emails/${clicked}`)
+  .then(response => response.json())
+  .then(email => {
+  // Print email
+  console.log(email);
+  
+})})})}
