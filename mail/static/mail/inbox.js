@@ -73,10 +73,16 @@ function load_mailbox(mailbox) {
 
 
     //display emails
+    var all_mail = document.createElement("div");
+    all_mail.id = "all_mail";
+    document.getElementById('emails-view').append(all_mail);
+
     var i;
     for (i = 0; i < emails.length; i++) {
     var newDiv = document.createElement("div");
-    newDiv.id = email_id[i];
+    newDiv.style.position = "relative";
+    newDiv.style.zIndex = "999";
+    newDiv.className = email_id[i];
     newDiv.style.border = "thin solid";
     newDiv.style.borderColor = "black";
     newDiv.style.padding = "15px";
@@ -88,16 +94,29 @@ function load_mailbox(mailbox) {
     if (read[i] == true) {
       newDiv.style.backgroundColor = "#DCDCDC";
     }   
-    newDiv.innerHTML = `<h5 style="font-weight:bold">${a}</h5> <h6>${b}</h6> <h7 style="color: gray">${c}</h7>`;
-    document.getElementById('emails-view').append(newDiv);
+    newDiv.innerHTML = `<h5 class=${email_id[i]} style="font-weight:bold">${a}</h5> <h6 class=${email_id[i]}>${b}</h6> <h7 class=${email_id[i]} style="color: gray">${c}</h7>`;
+    document.getElementById('all_mail').append(newDiv);
+
     }
 
+
+    //NEED TO DISPLAY ONLY EMAIL CLICKED FROM JSON
 document.addEventListener('click', function(e) {
-const clicked = e.target.id
+const clicked = e.target.className
   fetch(`/emails/${clicked}`)
   .then(response => response.json())
   .then(email => {
   // Print email
   console.log(email);
+
+  var newDiv_single = document.createElement("div");
+  let sender = email.map(a => a.sender);
+  let subject = email.map(a => a.subject);
+  let timestamp = email.map(a => a.timestamp);
+  let read = email.map(a => a.read);
+  let email_id = email.map(a => a.id);
+  
+  newDiv_single.innerHTML = `<h5 class=${email_id[i]} style="font-weight:bold">${a}</h5> <h6 class=${email_id[i]}>${b}</h6> <h7 class=${email_id[i]} style="color: gray">${c}</h7>`;
+  document.getElementById("all_mail").replaceWith(newDiv_single);
   
 })})})}
