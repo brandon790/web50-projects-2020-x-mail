@@ -62,7 +62,7 @@ function load_mailbox(mailbox) {
  .then(response => response.json())
  .then(emails => {
      // Print emails
-     //console.log(emails);
+     console.log(emails);
 
      //array of each field
     let sender = emails.map(a => a.sender);
@@ -100,23 +100,44 @@ function load_mailbox(mailbox) {
     }
 
 
-    //NEED TO DISPLAY ONLY EMAIL CLICKED FROM JSON
 document.addEventListener('click', function(e) {
 const clicked = e.target.className
   fetch(`/emails/${clicked}`)
   .then(response => response.json())
   .then(email => {
   // Print email
+  email.read = true;
   console.log(email);
 
   var newDiv_single = document.createElement("div");
-  let sender = email.map(a => a.sender);
-  let subject = email.map(a => a.subject);
-  let timestamp = email.map(a => a.timestamp);
-  let read = email.map(a => a.read);
-  let email_id = email.map(a => a.id);
+  let sender = email.sender;
+  let recipients = email.recipients;
+  let subject = email.subject;
+  let timestamp = email.timestamp;
+  let email_id = email.id;
+  let body = email.body;
+ 
+  fetch(`/emails/${email_id}`, {
+    method: 'PUT',
+    body: JSON.stringify({
+        read: true
+    })
+  })
   
-  newDiv_single.innerHTML = `<h5 class=${email_id[i]} style="font-weight:bold">${a}</h5> <h6 class=${email_id[i]}>${b}</h6> <h7 class=${email_id[i]} style="color: gray">${c}</h7>`;
+  
+  newDiv_single.innerHTML = `<h6 class=${email_id[i]} style="font-weight:bold">From:</h6><h6> ${sender} </h6> <h6 class=${email_id[i]} style="font-weight:bold">To:</h6><h6> ${recipients} </h6> <h6 class=${email_id[i]} style="font-weight:bold">Subject:</h6><h6> ${subject} </h6> <h6 class=${email_id[i]} style="font-weight:bold">Timestamp:</h6><h6> ${timestamp} </h6> <br> <p> ${body} </p>`;
   document.getElementById("all_mail").replaceWith(newDiv_single);
-  
-})})})}
+  var archive_but = document.createElement("BUTTON");
+  archive_but.id = "archive";
+  archive_but.innerHTML = "Archive";
+  document.getElementById("emails-view").append(archive_but);
+/// need to unarchive emails
+  document.querySelector('#archive').addEventListener('click', function() {
+  fetch(`/emails/${email_id}`, {
+    method: 'PUT',
+    body: JSON.stringify({
+        archived: true
+    })
+  }) 
+  ;
+})})})})}
