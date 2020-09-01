@@ -62,7 +62,7 @@ function load_mailbox(mailbox) {
  .then(response => response.json())
  .then(emails => {
      // Print emails
-     console.log(emails);
+     //console.log(emails);
 
      //array of each field
     let sender = emails.map(a => a.sender);
@@ -116,6 +116,7 @@ const clicked = e.target.className
   let timestamp = email.timestamp;
   let email_id = email.id;
   let body = email.body;
+  let archived = email.archived;
  
   fetch(`/emails/${email_id}`, {
     method: 'PUT',
@@ -128,16 +129,29 @@ const clicked = e.target.className
   newDiv_single.innerHTML = `<h6 class=${email_id[i]} style="font-weight:bold">From:</h6><h6> ${sender} </h6> <h6 class=${email_id[i]} style="font-weight:bold">To:</h6><h6> ${recipients} </h6> <h6 class=${email_id[i]} style="font-weight:bold">Subject:</h6><h6> ${subject} </h6> <h6 class=${email_id[i]} style="font-weight:bold">Timestamp:</h6><h6> ${timestamp} </h6> <br> <p> ${body} </p>`;
   document.getElementById("all_mail").replaceWith(newDiv_single);
   var archive_but = document.createElement("BUTTON");
+  var unarchive_but = document.createElement("BUTTON");
   archive_but.id = "archive";
+  archive_but.className = "arch";
+  unarchive_but.id = "unarchive";
+  unarchive_but.className = "arch";
   archive_but.innerHTML = "Archive";
-  document.getElementById("emails-view").append(archive_but);
-/// need to unarchive emails
-  document.querySelector('#archive').addEventListener('click', function() {
+  unarchive_but.innerHTML = "UnArchive";
+  if (archived == false) {
+    document.getElementById("emails-view").append(archive_but);
+    archive_but.innerHTML = "Archive";
+  }
+  else if (archived == true) {
+    document.getElementById("emails-view").append(unarchive_but);
+  
+  }
+/// archive/unarchive emails
+  document.querySelector('.arch').addEventListener('click', function() {
   fetch(`/emails/${email_id}`, {
     method: 'PUT',
     body: JSON.stringify({
-        archived: true
-    })
+        archived: !archived
+    })  
   }) 
+  load_mailbox('inbox')
   ;
 })})})})}
