@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
   // By default, load the inbox
-  load_mailbox('inbox');
+  load_mailbox('sent');
 });
 
 function compose_email() {
@@ -18,6 +18,8 @@ function compose_email() {
   document.querySelector('#emails-view').style.display = 'none';
   document.querySelector('#compose-view').style.display = 'block';
   document.querySelector('#emails').style.display = 'none';
+  document.querySelector('#compose-view-reply').style.display = 'none';
+
   
   
 
@@ -27,7 +29,17 @@ function compose_email() {
   document.querySelector('#compose-body').value = '';
 }
 
-  //post email
+function compose_email_reply() {
+
+  document.querySelector('#emails-view').style.display = 'none';
+  document.querySelector('#compose-view-reply').style.display = 'block';
+  document.querySelector('#compose-view').style.display = 'none';
+  document.querySelector('#emails').style.display = 'none';
+  }
+
+
+
+//post email
 document.addEventListener('submit', function() {
   fetch('/emails', {
     method: 'POST',
@@ -44,11 +56,14 @@ document.addEventListener('submit', function() {
   })
 });
 
+
+
 function load_mailbox(mailbox) {
   
   // Show the mailbox and hide other views
   document.querySelector('#emails-view').style.display = 'block';
   document.querySelector('#compose-view').style.display = 'none';
+  document.querySelector('#compose-view-reply').style.display = 'none';
 
 
   // Show the mailbox name
@@ -108,6 +123,7 @@ const clicked = e.target.className
   // Print email
   email.read = true;
   console.log(email);
+  var cur_mailbox = mailbox;
 
   var newDiv_single = document.createElement("div");
   let sender = email.sender;
@@ -129,21 +145,56 @@ const clicked = e.target.className
   newDiv_single.innerHTML = `<h6 class=${email_id[i]} style="font-weight:bold">From:</h6><h6> ${sender} </h6> <h6 class=${email_id[i]} style="font-weight:bold">To:</h6><h6> ${recipients} </h6> <h6 class=${email_id[i]} style="font-weight:bold">Subject:</h6><h6> ${subject} </h6> <h6 class=${email_id[i]} style="font-weight:bold">Timestamp:</h6><h6> ${timestamp} </h6> <br> <p> ${body} </p>`;
   document.getElementById("all_mail").replaceWith(newDiv_single);
   var archive_but = document.createElement("BUTTON");
+  var reply_but = document.createElement("BUTTON");
   var unarchive_but = document.createElement("BUTTON");
   archive_but.id = "archive";
+  reply_but.id = "reply";
   archive_but.className = "arch";
   unarchive_but.id = "unarchive";
   unarchive_but.className = "arch";
   archive_but.innerHTML = "Archive";
   unarchive_but.innerHTML = "UnArchive";
-  if (archived == false) {
+  reply_but.innerHTML = "Reply";
+  document.getElementById("emails-view").append(reply_but);
+  if (archived == false ) {
     document.getElementById("emails-view").append(archive_but);
     archive_but.innerHTML = "Archive";
   }
-  else if (archived == true) {
+  else if (archived == true ) {
     document.getElementById("emails-view").append(unarchive_but);
   
   }
+    /// reply to email
+    document.querySelector("#reply").addEventListener('click', function() {
+      compose_email_reply();
+      }
+      )
+    ///prefills reply
+      document.querySelector('#compose-recipients-reply').value = '';
+      document.querySelector("#compose-recipients-reply").value = sender;
+      document.querySelector('#compose-subject-reply').value = '';
+      document.querySelector('#compose-body-reply').value = '';
+
+      document.querySelector("#compose-subject-reply").value =  `Re:${subject}`;
+      
+      document.querySelector("#compose-body-reply").value = `On ${timestamp} ${sender} wrote: ${body}` ;
+
+//post email-reply
+document.addEventListener('submit', function() {
+  fetch('/emails', {
+    method: 'POST',
+    body: JSON.stringify({
+      recipients: document.querySelector("#compose-recipients-reply").value,
+      subject: document.querySelector('#compose-subject-reply').value,
+      body: document.querySelector('#compose-body-reply').value
+    })
+  })
+  .then(response => response.json())
+  .then(result => {
+      // Print result
+      console.log(result);
+  })
+});
 /// archive/unarchive emails
   document.querySelector('.arch').addEventListener('click', function() {
   fetch(`/emails/${email_id}`, {
@@ -154,4 +205,5 @@ const clicked = e.target.className
   }) 
   load_mailbox('inbox')
   ;
+
 })})})})}

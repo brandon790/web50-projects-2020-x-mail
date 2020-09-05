@@ -32,6 +32,23 @@
             <input type="submit" class="btn btn-primary" id="submit"/>
         </form>
     </div>
+
+    <div id="compose-view-reply">
+        <h3>Reply</h3>
+        <form id="compose-form-reply">
+            <div class="form-group">
+                From: <input disabled class="form-control" value="{{ request.user.email }}">
+            </div>
+            <div class="form-group">
+                To: <input id="compose-recipients-reply" class="form-control">
+            </div>
+            <div class="form-group">
+                <input class="form-control" id="compose-subject-reply" placeholder="Subject">
+            </div>
+            <textarea class="form-control" id="compose-body-reply" placeholder="Body"></textarea>
+            <input type="submit" class="btn btn-primary" id="submit-reply"/>
+        </form>
+    </div>
 {% endblock %}
 
 {% block script %}
